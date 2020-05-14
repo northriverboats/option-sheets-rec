@@ -14,4 +14,4 @@
 11. Remember to Create New Branch Before Doing Any Work
 
 ## Build Executable
-`venv\Scripts\pyinstaller.exe --onefile --windowed --icon options.ico  --name "Option Sheets for Recreational" "option-sheet-rec.spec" main.py`
+`venv\Scripts\pyinstaller.exe --onefile  "Option Sheets for Recreational Boats.spec" main.py`
