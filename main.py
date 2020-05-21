@@ -51,14 +51,7 @@ def process_options(file_name_in, file_name_out):
 		blue = Font(color="0000FF")
 		row = 1
 		for option in sorted(options):
-
-			if len(options[option]["OUTFITTING PARTS"]) + len(options[option]["CANVAS PARTS"]) + len(options[option]["FABRICATION PARTS"]) + len(options[option]["PAINT PARTS"]) > 0:
-
-					row += 1
-					ws.cell(row = row, column = 1).value = option + " Outfitting"
-					ws.cell(row = row, column = 1).font = bold 
-					ws.cell(row = row, column = 2).value = options[option]["OPTION NAME"]
-					ws.cell(row = row, column = 2).font = bold
+			# if len(options[option]["OUTFITTING PARTS"]) + len(options[option]["CANVAS PARTS"]) + len(options[option]["FABRICATION PARTS"]) + len(options[option]["PAINT PARTS"]) > 0:
 			if len(options[option]["OPTION NOTES"]) > 0:
 					row += 1
 					ws.cell(row = row, column = 1).value =  options[option]["OPTION NOTES"]
@@ -67,80 +60,62 @@ def process_options(file_name_in, file_name_out):
 					row += 1
 					ws.cell(row = row, column = 1).value =  options[option]["EOS OUTFITTING NOTES"]
 					ws.cell(row = row, column = 1).font = blue
-			if len(options[option]["OUTFITTING PARTS"]) + len(options[option]["CANVAS PARTS"]) > 0:
-				rigging = options[option]["OUTFITTING PARTS"] + options[option]["CANVAS PARTS"]
-				for item in rigging:
-				
+
+			for section_name, section_options, count in [
+				[
+					'Paint', 
+					options[option]["PAINT PARTS"], 
+					len(options[option]["PAINT PARTS"]),
+				],
+				[
+					"Outfutting", 
+					options[option]["OUTFITTING PARTS"] + options[option]["CANVAS PARTS"], 
+					len(options[option]["OUTFITTING PARTS"]) + len(options[option]["CANVAS PARTS"]),
+				],
+				[
+					'Fabrication',
+					options[option]["FABRICATION PARTS"], 
+					len(options[option]["FABRICATION PARTS"])
+				],
+				[
+					'Paint', 
+					options[option]["PAINT PARTS"],
+					len(options[option]["PAINT PARTS"]),
+				],
+			]:
+				if count > 0:
 					row += 1
-					print(option, item["PART NUMBER"])
-					ws.cell(row = row, column = 1).value = item["VENDOR"]
-					ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 2).value = item["VENDOR PART"]
-					ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
-					ws.cell(row = row, column = 4).value = float(item["PRICE"])
-					ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 5).value = item["UOM"]
-					ws.cell(row = row, column = 6).value = item[length + " QTY"]
-					ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
-					ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 8).value = 0
-					ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
-					ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+					ws.cell(row = row, column = 1).value = option + " " + section_name
+					ws.cell(row = row, column = 1).font = bold 
+					ws.cell(row = row, column = 2).value = options[option]["OPTION NAME"]
+					ws.cell(row = row, column = 2).font = bold
+
+				if count > 0:
+					for item in section_options:
+						row += 1
+						print(option, item["PART NUMBER"])
+						ws.cell(row = row, column = 1).value = item["VENDOR"]
+						ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
+						ws.cell(row = row, column = 2).value = item["VENDOR PART"]
+						ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
+						ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
+						ws.cell(row = row, column = 4).value = float(item["PRICE"])
+						ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+						ws.cell(row = row, column = 5).value = item["UOM"]
+						ws.cell(row = row, column = 6).value = item[length + " QTY"]
+						ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
+						ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+						ws.cell(row = row, column = 8).value = 0
+						ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+						ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
+						ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
 					
-			if len(options[option]["FABRICATION PARTS"]) > 0:
-					row += 1
-					ws.cell(row = row, column = 1).value = option + " Fabrication"
-					ws.cell(row = row, column = 1).font = bold 
-					ws.cell(row = row, column = 2).value = options[option]["OPTION NAME"]
-					ws.cell(row = row, column = 2).font = bold
-			if len(options[option]["FABRICATION PARTS"]) > 0:
-				for item in options[option]["FABRICATION PARTS"]:
-					row += 1
-					print(option, item["PART NUMBER"])
-					ws.cell(row = row, column = 1).value = item["VENDOR"]
-					ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 2).value = item["VENDOR PART"]
-					ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
-					ws.cell(row = row, column = 4).value = float(item["PRICE"])
-					ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 5).value = item["UOM"]
-					ws.cell(row = row, column = 6).value = item[length + " QTY"]
-					ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
-					ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 8).value = 0
-					ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
-					ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
 			
-			if len(options[option]["PAINT PARTS"]) > 0:
-					row += 1
-					ws.cell(row = row, column = 1).value = option + " Paint"
-					ws.cell(row = row, column = 1).font = bold 
-					ws.cell(row = row, column = 2).value = options[option]["OPTION NAME"]
-					ws.cell(row = row, column = 2).font = bold
-			if len(options[option]["PAINT PARTS"]) > 0:
-				for item in options[option]["PAINT PARTS"]:
-					row += 1
-					print(option, item["PART NUMBER"])
-					ws.cell(row = row, column = 1).value = item["VENDOR"]
-					ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 2).value = item["VENDOR PART"]
-					ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
-					ws.cell(row = row, column = 4).value = float(item["PRICE"])
-					ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 5).value = item["UOM"]
-					ws.cell(row = row, column = 6).value = item[length + " QTY"]
-					ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
-					ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 8).value = 0
-					ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
-					ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-			
+				if len(options[option]["PAINT PARTS"]) > 0:
+						ws.cell(row = row, column = 1).value = option + " Paint"
+				if len(options[option]["PAINT PARTS"]) > 0:
+					for item in options[option]["PAINT PARTS"]:
+						pass
 	wb.save(file_name_out)
 
 process_options(r"K:\Links\2020\Options\options.pickle", r"output\Boat Options Parts Listing.xlsx")
