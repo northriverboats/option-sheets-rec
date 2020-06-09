@@ -3,6 +3,15 @@ from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
 import datetime
 
+# Put your data at the top
+pickles = [
+	[r"K:\Links\2020\Options\options.pickle", r"output\Boat Options Parts Listing.xlsx"],
+	[r"K:\Links\2020\Yamaha Rigging\yamaha rigging.pickle", r"output\Yamaha Options Parts Listing.xlsx"],
+	[r"K:\Links\2020\Mercury Rigging\mercury rigging.pickle", r"output\Mercury Options Parts Listing.xlsx"],
+	[r"K:\Links\2020\Honda Rigging\honda rigging.pickle", r"output\Honda Options Parts Listing.xlsx"],
+]
+
+
 lenghts = [
 	"18.5",
 	"20", 
@@ -19,7 +28,7 @@ lenghts = [
 ]
 
 def process_options(file_name_in, file_name_out):
-	# load data from piclk
+	# load data from pickle
 	with open(file_name_in, "rb") as file:
 		options =  pickle.load(file)
 	kill=[]
@@ -47,7 +56,7 @@ def process_options(file_name_in, file_name_out):
 	for length in lenghts:
 		ws = wb["L" + length]
 		bold = Font(bold=True, underline="single", color="FF0000")
-		red = Font(color="FF0000")
+		# red = Font(color="FF0000")
 		blue = Font(color="0000FF")
 		row = 1
 		for option in sorted(options):
@@ -118,7 +127,5 @@ def process_options(file_name_in, file_name_out):
 						pass
 	wb.save(file_name_out)
 
-process_options(r"K:\Links\2020\Options\options.pickle", r"output\Boat Options Parts Listing.xlsx")
-process_options(r"K:\Links\2020\Yamaha Rigging\yamaha rigging.pickle", r"output\Yamaha Options Parts Listing.xlsx")
-process_options(r"K:\Links\2020\Mercury Rigging\mercury rigging.pickle", r"output\Mercury Options Parts Listing.xlsx")
-process_options(r"K:\Links\2020\Honda Rigging\honda rigging.pickle", r"output\Honda Options Parts Listing.xlsx")
+for pickle_file, output in pickles:
+	process_options(pickle_file, output)
