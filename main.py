@@ -31,12 +31,7 @@ def load_pickle(file_name):
 	with open(file_name, "rb") as file:
 		return pickle.load(file)
 
-
-def process_options(file_name_in, file_name_out):
-	# create new workbook
-	wb = load_workbook(r"templates\CostingSheetTemplate.xlsx")
-	options =  load_pickle(file_name_in)
-
+def process_lengths(wb, options, file_name):
 	for length in lenghts:
 		ws = wb["L" + length]
 		bold = Font(bold=True, underline="single", color="FF0000")
@@ -109,7 +104,14 @@ def process_options(file_name_in, file_name_out):
 				if len(options[option]["PAINT PARTS"]) > 0:
 					for item in options[option]["PAINT PARTS"]:
 						pass
-	wb.save(file_name_out)
+	wb.save(file_name)
+
+
+
+def process_options(file_name_in, file_name_out):
+	wb = load_workbook(r"templates\CostingSheetTemplate.xlsx")
+	options =  load_pickle(file_name_in)
+	process_lengths(wb, options, file_name_out)
 
 for pickle_file, output in pickles:
 	process_options(pickle_file, output)
