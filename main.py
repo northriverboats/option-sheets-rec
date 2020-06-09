@@ -31,25 +31,6 @@ def process_options(file_name_in, file_name_out):
 	# load data from pickle
 	with open(file_name_in, "rb") as file:
 		options =  pickle.load(file)
-	kill=[]
-	for option in options:
-		co = options.get(option+" - CO")
-		cr = options.get(option+" - CR")
-		if co:
-			kill.append(option+" - CO")
-			options[option]["OUTFITTING PARTS"] += co["OUTFITTING PARTS"]
-			options[option]["CANVAS PARTS"] += co["CANVAS PARTS"]
-			options[option]["PAINT PARTS"] += co["PAINT PARTS"]
-			options[option]["FABRICATION PARTS"] += co["FABRICATION PARTS"]
-		if cr:
-			kill.append(option+" - CR")
-			options[option]["OUTFITTING PARTS"] += cr["OUTFITTING PARTS"]
-			options[option]["CANVAS PARTS"] += cr["CANVAS PARTS"]
-			options[option]["PAINT PARTS"] += cr["PAINT PARTS"]
-			options[option]["FABRICATION PARTS"] += cr["FABRICATION PARTS"]
-
-	for option in kill:
-		del options[option]
 
 	wb = load_workbook(r"templates\CostingSheetTemplate.xlsx") # create new workbook
 
