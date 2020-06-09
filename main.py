@@ -11,28 +11,12 @@ pickles = [
 	[r"K:\Links\2020\Honda Rigging\honda rigging.pickle", r"output\Honda Options Parts Listing.xlsx"],
 ]
 
-
-lenghts = [
-	"18.5",
-	"20", 
-	"21",
-	"22",
-	"23", 
-	"24", 
-	"25", 
-	"27",
-	"29",
-	"31",
-	"33",
-	"35",
-]
-
 def load_pickle(file_name):
 	with open(file_name, "rb") as file:
 		return pickle.load(file)
 
 def process_lengths(wb, options, file_name):
-	for length in lenghts:
+	for length in [k.split(' ')[0] for k in options[next(iter(options))] if " TOTAL COST" in k]:
 		ws = wb["L" + length]
 		bold = Font(bold=True, underline="single", color="FF0000")
 		# red = Font(color="FF0000")
