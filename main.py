@@ -27,12 +27,15 @@ lenghts = [
 	"35",
 ]
 
-def process_options(file_name_in, file_name_out):
-	# load data from pickle
-	with open(file_name_in, "rb") as file:
-		options =  pickle.load(file)
+def load_pickle(file_name):
+	with open(file_name, "rb") as file:
+		return pickle.load(file)
 
-	wb = load_workbook(r"templates\CostingSheetTemplate.xlsx") # create new workbook
+
+def process_options(file_name_in, file_name_out):
+	# create new workbook
+	wb = load_workbook(r"templates\CostingSheetTemplate.xlsx")
+	options =  load_pickle(file_name_in)
 
 	for length in lenghts:
 		ws = wb["L" + length]
