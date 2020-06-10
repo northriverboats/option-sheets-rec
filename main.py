@@ -34,6 +34,16 @@ def set_font_for_notes(option, ws, row):
 	return row
 
 
+def process_section_name(option, ws, option_key, row, section_name, count):
+	if count > 0:
+		row += 1
+		ws.cell(row = row, column = 1).value = option_key + " " + section_name
+		ws.cell(row = row, column = 1).font = RED_BOLD
+		ws.cell(row = row, column = 2).value = option["OPTION NAME"]
+		ws.cell(row = row, column = 2).font = RED_BOLD
+	return row
+
+
 def process_sections(option, ws, length, option_key, row):
 	sections = [
 		[
@@ -58,12 +68,7 @@ def process_sections(option, ws, length, option_key, row):
 		],
 	]	
 	for section_name, section_options, count in sections:
-		if count > 0:
-			row += 1
-			ws.cell(row = row, column = 1).value = option_key + " " + section_name
-			ws.cell(row = row, column = 1).font = RED_BOLD
-			ws.cell(row = row, column = 2).value = option["OPTION NAME"]
-			ws.cell(row = row, column = 2).font = RED_BOLD
+		row = process_section_name(option, ws, option_key, row, section_name, count)
 
 		if count > 0:
 			for item in section_options:
