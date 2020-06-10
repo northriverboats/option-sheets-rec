@@ -44,6 +44,29 @@ def process_section_name(option, ws, option_key, row, section_name, count):
 	return row
 
 
+def process_section_items(option, ws, length, option_key, section_options, row, count):
+	if count > 0:
+		for item in section_options:
+			row += 1
+			print(option_key, item["PART NUMBER"])
+			ws.cell(row = row, column = 1).value = item["VENDOR"]
+			ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
+			ws.cell(row = row, column = 2).value = item["VENDOR PART"]
+			ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
+			ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
+			ws.cell(row = row, column = 4).value = float(item["PRICE"])
+			ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+			ws.cell(row = row, column = 5).value = item["UOM"]
+			ws.cell(row = row, column = 6).value = item[length + " QTY"]
+			ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
+			ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+			ws.cell(row = row, column = 8).value = 0
+			ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+			ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
+			ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+	return row
+
+
 def process_sections(option, ws, length, option_key, row):
 	sections = [
 		[
@@ -69,31 +92,12 @@ def process_sections(option, ws, length, option_key, row):
 	]	
 	for section_name, section_options, count in sections:
 		row = process_section_name(option, ws, option_key, row, section_name, count)
-
-		if count > 0:
-			for item in section_options:
-				row += 1
-				print(option_key, item["PART NUMBER"])
-				ws.cell(row = row, column = 1).value = item["VENDOR"]
-				ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
-				ws.cell(row = row, column = 2).value = item["VENDOR PART"]
-				ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
-				ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
-				ws.cell(row = row, column = 4).value = float(item["PRICE"])
-				ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-				ws.cell(row = row, column = 5).value = item["UOM"]
-				ws.cell(row = row, column = 6).value = item[length + " QTY"]
-				ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
-				ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-				ws.cell(row = row, column = 8).value = 0
-				ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-				ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
-				ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+		row = process_section_items(option, ws, length, option_key, section_options, row, count)
 
 		if len(option["PAINT PARTS"]) > 0:
 				ws.cell(row = row, column = 1).value = option_key + " Paint"
 		if len(option["PAINT PARTS"]) > 0:
-			for item in option["PAINT PARTS"]:
+			for __ in option["PAINT PARTS"]:  # change __ to item
 				pass
 	return row
 
