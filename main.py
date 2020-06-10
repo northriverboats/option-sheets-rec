@@ -35,7 +35,7 @@ def set_font_for_notes(option, ws, row):
 
 
 def process_sections(option, ws, length, option_key, row):
-	for section_name, section_options, count in [
+	sections = [
 		[
 			'Paint', 
 			option["PAINT PARTS"], 
@@ -56,7 +56,8 @@ def process_sections(option, ws, length, option_key, row):
 			option["PAINT PARTS"],
 			len(option["PAINT PARTS"]),
 		],
-	]:
+	]	
+	for section_name, section_options, count in sections:
 		if count > 0:
 			row += 1
 			ws.cell(row = row, column = 1).value = option_key + " " + section_name
