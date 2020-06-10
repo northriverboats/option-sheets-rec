@@ -21,75 +21,84 @@ def load_pickle(file_name):
 		return pickle.load(file)
 
 
+def set_font_for_notes(option, ws, row):
+	# if len(option["OUTFITTING PARTS"]) + len(option["CANVAS PARTS"]) + len(option["FABRICATION PARTS"]) + len(option["PAINT PARTS"]) > 0:
+	if len(option["OPTION NOTES"]) > 0:
+			row += 1
+			ws.cell(row = row, column = 1).value =  option["OPTION NOTES"]
+			ws.cell(row = row, column = 1).font = RED_BOLD
+	if len(option["EOS OUTFITTING NOTES"]) > 0:
+			row += 1
+			ws.cell(row = row, column = 1).value =  option["EOS OUTFITTING NOTES"]
+			ws.cell(row = row, column = 1).font = BLUE
+	return row
+
+
+def process_sections(option, ws, length, option_key, row):
+	for section_name, section_options, count in [
+		[
+			'Paint', 
+			option["PAINT PARTS"], 
+			len(option["PAINT PARTS"]),
+		],
+		[
+			"Outfutting", 
+			option["OUTFITTING PARTS"] + option["CANVAS PARTS"], 
+			len(option["OUTFITTING PARTS"]) + len(option["CANVAS PARTS"]),
+		],
+		[
+			'Fabrication',
+			option["FABRICATION PARTS"], 
+			len(option["FABRICATION PARTS"])
+		],
+		[
+			'Paint', 
+			option["PAINT PARTS"],
+			len(option["PAINT PARTS"]),
+		],
+	]:
+		if count > 0:
+			row += 1
+			ws.cell(row = row, column = 1).value = option_key + " " + section_name
+			ws.cell(row = row, column = 1).font = RED_BOLD
+			ws.cell(row = row, column = 2).value = option["OPTION NAME"]
+			ws.cell(row = row, column = 2).font = RED_BOLD
+
+		if count > 0:
+			for item in section_options:
+				row += 1
+				print(option_key, item["PART NUMBER"])
+				ws.cell(row = row, column = 1).value = item["VENDOR"]
+				ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
+				ws.cell(row = row, column = 2).value = item["VENDOR PART"]
+				ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
+				ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
+				ws.cell(row = row, column = 4).value = float(item["PRICE"])
+				ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+				ws.cell(row = row, column = 5).value = item["UOM"]
+				ws.cell(row = row, column = 6).value = item[length + " QTY"]
+				ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
+				ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+				ws.cell(row = row, column = 8).value = 0
+				ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+				ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
+				ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
+
+		if len(option["PAINT PARTS"]) > 0:
+				ws.cell(row = row, column = 1).value = option_key + " Paint"
+		if len(option["PAINT PARTS"]) > 0:
+			for item in option["PAINT PARTS"]:
+				pass
+	return row
+
+
 def process_options(options, ws, length):
 	row = 1
 	for option_key in sorted(options):
 		option = options[option_key]
-		# if len(option["OUTFITTING PARTS"]) + len(option["CANVAS PARTS"]) + len(option["FABRICATION PARTS"]) + len(option["PAINT PARTS"]) > 0:
-		if len(option["OPTION NOTES"]) > 0:
-				row += 1
-				ws.cell(row = row, column = 1).value =  option["OPTION NOTES"]
-				ws.cell(row = row, column = 1).font = RED_BOLD
-		if len(option["EOS OUTFITTING NOTES"]) > 0:
-				row += 1
-				ws.cell(row = row, column = 1).value =  option["EOS OUTFITTING NOTES"]
-				ws.cell(row = row, column = 1).font = BLUE
+		row = set_font_for_notes(option, ws, row)
+		row = process_sections(option, ws, length, option_key, row)
 
-		for section_name, section_options, count in [
-			[
-				'Paint', 
-				option["PAINT PARTS"], 
-				len(option["PAINT PARTS"]),
-			],
-			[
-				"Outfutting", 
-				option["OUTFITTING PARTS"] + option["CANVAS PARTS"], 
-				len(option["OUTFITTING PARTS"]) + len(option["CANVAS PARTS"]),
-			],
-			[
-				'Fabrication',
-				option["FABRICATION PARTS"], 
-				len(option["FABRICATION PARTS"])
-			],
-			[
-				'Paint', 
-				option["PAINT PARTS"],
-				len(option["PAINT PARTS"]),
-			],
-		]:
-			if count > 0:
-				row += 1
-				ws.cell(row = row, column = 1).value = option_key + " " + section_name
-				ws.cell(row = row, column = 1).font = RED_BOLD
-				ws.cell(row = row, column = 2).value = option["OPTION NAME"]
-				ws.cell(row = row, column = 2).font = RED_BOLD
-
-			if count > 0:
-				for item in section_options:
-					row += 1
-					print(option_key, item["PART NUMBER"])
-					ws.cell(row = row, column = 1).value = item["VENDOR"]
-					ws.cell(row = row, column = 1).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 2).value = item["VENDOR PART"]
-					ws.cell(row = row, column = 2).alignment = Alignment(horizontal='left')
-					ws.cell(row = row, column = 3).value = item["DESCRIPTION"]
-					ws.cell(row = row, column = 4).value = float(item["PRICE"])
-					ws.cell(row = row, column = 4).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 5).value = item["UOM"]
-					ws.cell(row = row, column = 6).value = item[length + " QTY"]
-					ws.cell(row = row, column = 7).value = "=SUM(D" + str(row) + "*F" + str(row) + ")"
-					ws.cell(row = row, column = 7).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 8).value = 0
-					ws.cell(row = row, column = 8).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-					ws.cell(row = row, column = 9).value = "=SUM(G" + str(row) + "+H" + str(row) + ")"
-					ws.cell(row = row, column = 9).number_format = r'_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)'
-				
-		
-			if len(option["PAINT PARTS"]) > 0:
-					ws.cell(row = row, column = 1).value = option_key + " Paint"
-			if len(option["PAINT PARTS"]) > 0:
-				for item in option["PAINT PARTS"]:
-					pass
 
 
 def process_lengths(wb, options, file_name):
